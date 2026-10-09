@@ -10,6 +10,7 @@ const categories = [
   'Residential Projects',
   'Offices & Warehouses',
   'Restaurants',
+  'Designing',
   'Sprinkler Installation',
   'Modular Cabinetry',
 ];
