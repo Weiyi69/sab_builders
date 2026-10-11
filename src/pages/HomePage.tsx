@@ -1,12 +1,23 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronDown, ShieldCheck, Building2, Gauge, Sparkles } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { ArrowRight, ChevronDown, ShieldCheck, Building2, Compass, Factory, Flame, Gauge, Home, PanelsTopLeft, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SectionTitle } from '../components/SectionTitle';
 import { projects, services } from '../data/content';
 import heroVideo from '../assets/images/video.mp4';
 
+const serviceIcons: Record<string, ReactNode> = {
+  Building2: <Building2 size={20} />,
+  Home: <Home size={20} />,
+  Factory: <Factory size={20} />,
+  Sparkles: <Sparkles size={20} />,
+  Compass: <Compass size={20} />,
+  Flame: <Flame size={20} />,
+  PanelsTopLeft: <PanelsTopLeft size={20} />,
+};
+
 const stats = [
-  { value: '5', label: 'Years delivering excellence' },
+  { value: '4', label: 'Years delivering excellence' },
   { value: '140+', label: 'Projects completed' },
   { value: '96%', label: 'Client retention' },
 ];
@@ -112,10 +123,10 @@ export default function HomePage() {
       <section className="section-shell py-24">
         <SectionTitle eyebrow="Construction Services" title="An integrated suite of services for complex delivery." description="Every engagement is shaped by our multidisciplinary team and guided by a single point of accountability." />
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {services.slice(0, 6).map((service, index) => (
+          {services.map((service, index) => (
             <motion.div key={service.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.4, delay: index * 0.05 }} className="glass rounded-[1.75rem] p-8 transition hover:-translate-y-1">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/15 text-gold">
-                <Building2 size={20} />
+                {serviceIcons[service.icon] ?? <Building2 size={20} />}
               </div>
               <h3 className="mt-6 text-xl font-semibold text-white">{service.title}</h3>
               <p className="mt-3 text-sm leading-7 text-stone-400">{service.description}</p>
