@@ -6,6 +6,13 @@
     <meta name="description" content="SAB Builders And Trading Inc. - premium construction company website" />
     <link rel="icon" type="image/png" href="/src/assets/images/sab_favicon.png" />
     <title>SAB Builders And Trading Inc.</title>
+    <script>
+      const navigationEntry = performance.getEntriesByType('navigation')[0];
+      if (navigationEntry?.type === 'reload' && 'scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+        window.addEventListener('pageshow', () => window.scrollTo(0, 0), { once: true });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

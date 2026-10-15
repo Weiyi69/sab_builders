@@ -1,10 +1,47 @@
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Clock3, MapPin, Mail, Phone, Send } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
+const emailAddress = 'sab_builders2021@yahoo.com';
+const projectTypes = [
+  'Retail & Commercial Spaces',
+  'Residential Projects',
+  'Offices & Warehouses',
+  'Restaurants',
+  'Designing',
+  'Sprinkler Installation',
+  'Modular Cabinetry',
+];
+
 export default function ContactPage() {
   const [searchParams] = useSearchParams();
-  const selectedService = searchParams.get('service') || 'Retail & Commercial Spaces';
+  const queryService = searchParams.get('service');
+  const initialProjectType = projectTypes.includes(queryService ?? '')
+    ? queryService ?? projectTypes[0]
+    : projectTypes[0];
+  const [projectType, setProjectType] = useState(initialProjectType);
+  const [formStatus, setFormStatus] = useState('');
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get('name') ?? '').trim();
+    const email = String(formData.get('email') ?? '').trim();
+    const message = String(formData.get('message') ?? '').trim();
+    const subject = `Website inquiry: ${projectType}`;
+    const body = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Project type: ${projectType}`,
+      '',
+      'Message:',
+      message,
+    ].join('\n');
+
+    setFormStatus('Your email app should open with your inquiry ready to send. If it does not, email us directly using the address on this page.');
+    window.location.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
 
   return (
     <div className="pb-24">
@@ -22,14 +59,21 @@ Lot 11 Blk 3 Unit 2, Pineda Compound, Camia Rd. Nepo Subd. Cutcut, Angeles City,
               <div className="glass rounded-[1.75rem] p-6"><div className="flex items-start gap-3"><Clock3 className="mt-1 text-gold" size={18} /><div><p className="font-semibold text-white">Business Hours</p><p className="mt-1 text-sm leading-7 text-stone-400">Mon – Fri : 8am – 5pm</p></div></div></div>
             </div>
           </div>
-          <motion.form initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass rounded-[2rem] p-8">
+          <motion.form
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            onSubmit={handleSubmit}
+            className="glass rounded-[2rem] p-8"
+          >
             <div className="grid gap-6 md:grid-cols-2">
-              <label className="text-sm text-stone-300">Name<input className="mt-2 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none" /></label>
-              <label className="text-sm text-stone-300">Email<input className="mt-2 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none" /></label>
+              <label className="text-sm text-stone-300">Name<input name="name" autoComplete="name" placeholder="Name" required className="mt-2 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-stone-500" /></label>
+              <label className="text-sm text-stone-300">Email<input name="email" type="email" autoComplete="email" placeholder="Example@gmail.com" required className="mt-2 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-stone-500" /></label>
             </div>
-            <label className="mt-6 block text-sm text-stone-300">Project Type<select defaultValue={selectedService} className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-white outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30"><option className="bg-neutral-950 text-white">Retail &amp; Commercial Spaces</option><option className="bg-neutral-950 text-white">Residential Projects</option><option className="bg-neutral-950 text-white">Offices &amp; Warehouses</option><option className="bg-neutral-950 text-white">Restaurants</option><option className="bg-neutral-950 text-white">Designing</option><option className="bg-neutral-950 text-white">Sprinkler Installation</option><option className="bg-neutral-950 text-white">Modular Cabinetry</option></select></label>
-            <label className="mt-6 block text-sm text-stone-300">Message<textarea className="mt-2 min-h-36 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none" /></label>
-            <button className="mt-8 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 font-semibold text-black">Send message <Send size={16} /></button>
+            <label className="mt-6 block text-sm text-stone-300">Project Type<select name="projectType" value={projectType} onChange={(event) => setProjectType(event.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-white outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30">{projectTypes.map((type) => <option key={type} value={type} className="bg-neutral-950 text-white">{type}</option>)}</select></label>
+            <label className="mt-6 block text-sm text-stone-300">Message<textarea name="message" required className="mt-2 min-h-36 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none" /></label>
+            <button type="submit" className="mt-8 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 font-semibold text-black">Send message <Send size={16} /></button>
+            <p className="mt-4 text-sm text-stone-400" aria-live="polite">{formStatus}</p>
           </motion.form>
         </div>
       </section>
